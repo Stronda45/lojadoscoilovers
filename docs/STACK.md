@@ -5,6 +5,8 @@
 - PostgreSQL
 - SMTP para e-mail (alerta de pedido) — padrão de referência em
   `famain_be/api/famainpecas/utils.py` (`core/email_utils.py` no Salonix)
+- Playwright (Chromium headless) — só para listagem de produtos do dtsshop.de.
+  Detalhes completos: `docs/PLAYWRIGHT.md`.
 
 ## Frontend
 - React
@@ -14,6 +16,8 @@
 - Backend + banco: Railway
 - Frontend: Vercel
 - Hospedagem é custo do cliente, não nosso (ver proposta)
+- Deploy do backend precisa de Dockerfile custom por causa do Playwright — ver
+  `docs/PLAYWRIGHT.md` e `tasks/10-deploy.md`
 
 ## Fonte de dados (fornecedor)
 - dtsshop.de — conector híbrido:
