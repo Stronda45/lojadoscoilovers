@@ -1,23 +1,37 @@
 # 04 — Models: Customer, Order, regra de margem
 
-Estimativa: 5h · Bloqueada por: 01
+Estimativa: 5h · Bloqueada por: 01 · **Status: concluída**
 
 ## Objetivo
 Estrutura de dados do negócio (cliente final + pedido) e a regra de preço de venda.
 
 ## Tarefas
-- [ ] Model `Customer` (nome, e-mail, endereço de entrega, telefone) — ligado a
-      `User` do Django.
-- [ ] Model `Order` / `OrderItem` (produto, preço aplicado, status, cliente, criado em).
-- [ ] **Regra de margem configurável** — não travar em fixo nem em percentual:
-      suportar os dois modos (`fixed_amount` ou `multiplier`), com um valor default,
-      até o cliente confirmar o que quis dizer com "1.30".
-      - Default provisório: `fixed_amount = 50` (o que já foi orçado/proposto).
-      - Trocar para `multiplier = 1.30` é só mudar a config, sem alterar código, assim
-        que ele confirmar.
-- [ ] Migrations.
+- [x] Model `Customer` — `phone`, `delivery_address`, ligado a `User` via
+      `OneToOneField`. **Decisão**: nome e e-mail não duplicados aqui — usa
+      `user.get_full_name()`/`user.email` direto, evita dado desincronizado.
+- [x] Model `Order` (status: pendente/comprado no fornecedor/entregue) e `OrderItem`
+      (produto, preço de custo E preço de venda aplicado — guardado no momento do
+      pedido, não recalcula depois se a margem mudar).
+- [x] **Regra de margem configurável** — `MarginRule` (singleton, editável via
+      `/admin`, sem precisar de deploy pra trocar): suporta `fixed_amount` e
+      `multiplier`. Default: `fixed_amount = 50`.
+- [x] Migrations criadas e aplicadas (`core/migrations/0001_initial.py`).
 
 ## Aceite
-- [ ] Dado um preço de custo, a função de margem devolve o preço de venda certo nos
-      dois modos (testar manualmente os dois).
-- [ ] Trocar o modo de margem não exige deploy de código novo, só config.
+- [x] Dado um preço de custo, `apply_margin()` devolve o preço certo nos dois modos
+      — testado manualmente: `9.70` + fixo 50 = `59.70`; `9.70` × 1.30 = `12.61`.
+- [x] Trocar o modo de margem é só editar o registro `MarginRule` (via `/admin` ou
+      shell) — nenhuma mudança de código nem deploy.
+
+## Extra
+- Superuser local criado (`admin`/`admin123`, só dev) pra validação visual no
+  `/admin` — pedido do usuário numa conversa anterior.
+- `/admin` responde 302 → `/admin/login/?next=/admin/` sem sessão (comportamento
+  normal do Django, confirmado).
+- `default_auto_field` do app `core` estava faltando (Django gerou warning
+  `W042`) — corrigido em `core/apps.py` antes de gerar a migration, pra não deixar
+  isso pra trás.
+
+## Arquivos
+`backend/core/models.py`, `backend/core/admin.py`, `backend/core/apps.py`,
+`backend/core/migrations/0001_initial.py`
