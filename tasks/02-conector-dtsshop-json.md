@@ -1,6 +1,6 @@
 # 02 — Conector dtsshop.de: dados JSON (veículo/categoria/preço-estoque)
 
-Estimativa: 8h · Bloqueada por: 01
+Estimativa: 8h · Bloqueada por: 01 · **Status: concluída**
 
 Ver `/Users/pablo/Project/famaInPecas/planejamento.md` (raiz do famaInPecas) para todo
 o levantamento técnico já validado ao vivo.
@@ -9,13 +9,24 @@ o levantamento técnico já validado ao vivo.
 Implementar a parte do conector que é só HTTP + JSON, sem parsing de HTML.
 
 ## Tarefas
-- [ ] `get_car_data()` — extrai o JSON de veículo embutido na página inicial do
-      dtsshop.de (marcas/modelos/motorizações).
-- [ ] `get_categories(car_id)` — chama `getGroups?car_id=<id>&brand_filter=`.
-- [ ] `get_price_and_availability(product_ids: list[str])` — POST
+- [x] `get_car_data()` — GET público `getAllCarData?year=`, sem sessão.
+- [x] `get_categories(car_id)` — GET público `getGroups?car_id=<id>&brand_filter=`.
+- [x] `get_price_and_availability(product_ids: list[str])` — POST
       `productfinder/ajax/GetProductsPriceAndAvailability`, body `idarr[]=<id>`.
-- [ ] Tratar timeout/erro de rede sem derrubar o processo.
+- [x] Tratar timeout/erro de rede sem derrubar o processo.
+
+## Achado importante durante a implementação
+`get_price_and_availability` **não é um GET público simples** como os outros dois —
+precisa de sessão Magento (cookie `PHPSESSID`) + `form_key` (CSRF, extraído do HTML da
+home) + header `X-Requested-With: XMLHttpRequest`. Sem isso, o dtsshop.de devolve
+`302` com "Invalid form key" em vez de erro claro. Implementado em
+`_session_with_form_key()` no `core/connectors/dtsshop.py`.
 
 ## Aceite
-- [ ] Os 3 métodos retornam dado real do dtsshop.de.
-- [ ] Erro de rede não quebra a request — é capturado.
+- [x] Os 3 métodos retornam dado real do dtsshop.de (testado manualmente contra o
+      site ao vivo — 167 marcas, categorias reais, preço/estoque real de 2 produtos).
+- [x] Erro de rede não quebra a request — testado com host inexistente,
+      `SupplierError` capturada corretamente.
+
+## Arquivo
+`backend/core/connectors/dtsshop.py`
