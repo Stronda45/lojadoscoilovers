@@ -8,10 +8,13 @@ Django + DRF. Ver `docs/STACK.md` para stack completa e `tasks/` para o plano da
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python -m playwright install chromium   # necessario para list_products/search (task 03)
 cp .env.example .env   # se existir; senão usar o .env já commitado localmente (ver nota)
 python manage.py migrate
 python manage.py runserver
 ```
+
+Ou `make install` (ver `Makefile`).
 
 `GET http://127.0.0.1:8000/health` deve responder `{"status": "ok"}`.
 

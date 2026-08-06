@@ -6,6 +6,7 @@ install:
 	python3 -m venv .venv
 	$(PYTHON) -m pip install --upgrade pip -q
 	$(PYTHON) -m pip install -r requirements.txt -q
+	$(PYTHON) -m playwright install chromium
 
 run:
 	$(PYTHON) manage.py runserver
