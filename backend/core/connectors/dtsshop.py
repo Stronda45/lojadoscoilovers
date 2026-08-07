@@ -64,6 +64,47 @@ def get_car_data() -> dict:
         raise SupplierError(f"Resposta invalida (nao-JSON) de getAllCarData: {exc}") from exc
 
 
+def get_models(make_id: str) -> list[dict]:
+    """Modelos de uma marca (cascata marca->modelo). GET publico, sem sessao.
+    Achado ao vivo (nao estava documentado antes): `getModels?id=<make_id>`,
+    disparado pelo carselector.min.js do site ao selecionar uma marca."""
+    try:
+        resp = requests.get(
+            f"{COUCH_ADAPTER}/getModels",
+            params={"year": "", "id": make_id},
+            headers={"User-Agent": USER_AGENT},
+            timeout=TIMEOUT,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as exc:
+        raise SupplierError(f"Falha ao buscar modelos (make_id={make_id}): {exc}") from exc
+    except ValueError as exc:
+        raise SupplierError(f"Resposta invalida (nao-JSON) de getModels: {exc}") from exc
+
+
+def get_cars(make_id: str, model_id: str) -> list[dict]:
+    """Motorizacoes de um modelo (cascata modelo->motor). GET publico, sem
+    sessao. O `id` de cada item retornado AQUI e o `car_id` usado em todo o
+    resto (getGroups, cookies car_selector_car) — confirmado ao vivo navegando
+    o seletor de veiculo real do site."""
+    try:
+        resp = requests.get(
+            f"{COUCH_ADAPTER}/getCars",
+            params={"year": "", "make_id": make_id, "model_id": model_id},
+            headers={"User-Agent": USER_AGENT},
+            timeout=TIMEOUT,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as exc:
+        raise SupplierError(
+            f"Falha ao buscar motorizacoes (make_id={make_id}, model_id={model_id}): {exc}"
+        ) from exc
+    except ValueError as exc:
+        raise SupplierError(f"Resposta invalida (nao-JSON) de getCars: {exc}") from exc
+
+
 def get_categories(car_id: str) -> list[dict]:
     """Categorias de pecas disponiveis para um veiculo. GET publico, sem sessao."""
     try:

@@ -30,3 +30,25 @@ home) + header `X-Requested-With: XMLHttpRequest`. Sem isso, o dtsshop.de devolv
 
 ## Arquivo
 `backend/core/connectors/dtsshop.py`
+
+## Addendum (2026-08-07) — gap encontrado na task 08
+Ao começar o frontend (task 08), achamos que a task 02/03 nunca cobriu a
+cascata completa marca→modelo→motor→categoria — só marca (`get_car_data`) e
+categoria a partir de um `car_id` já pronto (`get_categories`). Faltava o meio:
+como chegar do modelo até o `car_id`.
+
+Investigado ao vivo (Playwright navegando o seletor real do site,
+interceptando as requisições disparadas):
+- [x] `get_models(make_id)` — `getModels?year=&id=<make_id>`. GET público.
+- [x] `get_cars(make_id, model_id)` — `getCars?year=&make_id=&model_id=`. GET
+      público. **Achado importante**: o `id` de cada item retornado aqui É o
+      `car_id` usado em tudo (categorias, cookies `car_selector_car`) —
+      confirmado comparando com os cookies reais setados pelo site após
+      selecionar motor.
+- [x] Cascata completa testada ao vivo: AUDI (make_id=5) → A3 8P
+      (model_id=4955) → 1.2 TSI (car_id=33251) → categorias reais → listagem
+      de produtos reais com preço.
+
+## Arquivo (atualizado)
+`backend/core/connectors/dtsshop.py`, `backend/core/search_views.py`,
+`backend/config/urls.py`

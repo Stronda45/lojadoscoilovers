@@ -5,8 +5,15 @@ fechar cada fase, pra não esquecer.
 
 ## Pendentes
 
-- [ ] **`search()` do conector dtsshop.de não testada ao vivo** (task 03). Testar
-      quando o site "esfriar" das investigações anteriores.
+- [ ] **`search()` do conector dtsshop.de — testada ao vivo, resultado
+      inconclusivo** (task 08): navegação funciona sem erro (confirma task 03),
+      mas retornou "Your search returned no results" tanto pra termo genérico
+      ("coilover") quanto pra um nº de peça exato de um produto que existe
+      (ex: "299100180", confirmado via listagem por categoria no mesmo teste).
+      O input do site diz "Search for article no. or configuration code" —
+      supeita e formato exato (código completo? case-sensitive?) ainda não
+      confirmado. Não bloqueia a busca principal (marca/modelo/categoria, essa
+      sim testada e funcionando 100%), só a busca por texto livre.
 - [ ] **Playwright lança um browser novo a cada chamada** (`list_products`/`search`).
       Funciona pra baixo volume, mas é lento (alguns segundos por chamada) e pesado
       em memória sob concorrência. Se o volume de uso crescer, revisar para reusar

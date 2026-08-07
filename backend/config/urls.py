@@ -17,6 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core.search_views import (
+    search,
+    vehicle_cars,
+    vehicle_categories,
+    vehicle_makes,
+    vehicle_models,
+)
 from core.views import health, login, logout, orders, register
 
 urlpatterns = [
@@ -26,4 +33,9 @@ urlpatterns = [
     path('auth/login', login),
     path('auth/logout', logout),
     path('orders', orders),
+    path('vehicles/makes', vehicle_makes),
+    path('vehicles/makes/<str:make_id>/models', vehicle_models),
+    path('vehicles/cars', vehicle_cars),
+    path('vehicles/<str:car_id>/categories', vehicle_categories),
+    path('search', search),
 ]
