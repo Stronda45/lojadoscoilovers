@@ -56,120 +56,142 @@ export default function App() {
   const categoryOptions = flattenCategories(categories.data);
 
   return (
-    <main>
-      <h1>Buscar peça</h1>
+    <div className="app-shell">
+      <header className="topbar">
+        <span className="brand">lojadoscoilovers</span>
+        <span className="tagline">peças e suspensões pro seu carro</span>
+      </header>
 
-      <fieldset>
-        <legend>Veículo</legend>
+      <main>
+        <fieldset className="filters">
+          <legend>Encontre a peça certa pro seu veículo</legend>
 
-        <label>
-          Marca
-          <select
-            value={makeId}
-            onChange={(e) => {
-              setMakeId(e.target.value);
-              setModelId("");
-              setCarId("");
-              setCategoryId("");
-            }}
-          >
-            <option value="">Selecione a marca</option>
-            {makes.data.map((make) => (
-              <option key={make.id} value={make.id}>
-                {make.name}
-              </option>
+          <div className="filters-grid">
+            <label>
+              Marca
+              <select
+                value={makeId}
+                onChange={(e) => {
+                  setMakeId(e.target.value);
+                  setModelId("");
+                  setCarId("");
+                  setCategoryId("");
+                }}
+              >
+                <option value="">Selecione a marca</option>
+                {makes.data.map((make) => (
+                  <option key={make.id} value={make.id}>
+                    {make.name}
+                  </option>
+                ))}
+              </select>
+              {makes.loading && <span className="hint">carregando marcas...</span>}
+              {makes.error && <span className="hint hint--error">erro: {makes.error}</span>}
+            </label>
+
+            <label>
+              Modelo
+              <select
+                value={modelId}
+                disabled={!makeId}
+                onChange={(e) => {
+                  setModelId(e.target.value);
+                  setCarId("");
+                  setCategoryId("");
+                }}
+              >
+                <option value="">Selecione o modelo</option>
+                {models.data.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
+              </select>
+              {models.loading && <span className="hint">carregando modelos...</span>}
+              {models.error && <span className="hint hint--error">erro: {models.error}</span>}
+            </label>
+
+            <label>
+              Motorização
+              <select
+                value={carId}
+                disabled={!modelId}
+                onChange={(e) => {
+                  setCarId(e.target.value);
+                  setCategoryId("");
+                }}
+              >
+                <option value="">Selecione a motorização</option>
+                {cars.data.map((car) => (
+                  <option key={car.id} value={car.id}>
+                    {car.name}
+                  </option>
+                ))}
+              </select>
+              {cars.loading && <span className="hint">carregando motorizações...</span>}
+              {cars.error && <span className="hint hint--error">erro: {cars.error}</span>}
+            </label>
+
+            <label>
+              Categoria
+              <select
+                value={categoryId}
+                disabled={!carId}
+                onChange={(e) => setCategoryId(e.target.value)}
+              >
+                <option value="">Selecione a categoria</option>
+                {categoryOptions.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {categories.loading && <span className="hint">carregando categorias...</span>}
+              {categories.error && <span className="hint hint--error">erro: {categories.error}</span>}
+            </label>
+          </div>
+        </fieldset>
+
+        <section className="results">
+          <h2>Resultados</h2>
+
+          {!categoryId && (
+            <p className="empty-state">Selecione marca, modelo, motorização e categoria pra ver produtos.</p>
+          )}
+          {results.loading && <p className="empty-state">Carregando resultados...</p>}
+          {results.error && <p className="empty-state hint--error">Erro ao buscar: {results.error}</p>}
+          {!results.loading && !results.error && categoryId && results.data.length === 0 && (
+            <p className="empty-state">Nenhum produto encontrado pra esse veículo/categoria.</p>
+          )}
+
+          <ul className="results-grid">
+            {results.data.map((item) => (
+              <li key={item.product_id} className="product-card">
+                <div className="product-card__image">
+                  {item.image ? <img src={item.image} alt={item.name} loading="lazy" /> : <span>sem imagem</span>}
+                </div>
+                <div className="product-card__body">
+                  <strong>{item.name}</strong>
+                  <span className="product-card__meta">
+                    {item.brand} · {item.part_no}
+                  </span>
+                  <span className="product-card__price">
+                    {item.price ? `€${item.price}` : "preço indisponível"}
+                  </span>
+                  {item.availability && (
+                    <span
+                      className="badge"
+                      style={{ "--badge-color": item.availability.color || "#999" }}
+                    >
+                      {item.availability.text}
+                    </span>
+                  )}
+                </div>
+              </li>
             ))}
-          </select>
-          {makes.loading && <span> carregando marcas...</span>}
-          {makes.error && <span role="alert"> erro: {makes.error}</span>}
-        </label>
-
-        <label>
-          Modelo
-          <select
-            value={modelId}
-            disabled={!makeId}
-            onChange={(e) => {
-              setModelId(e.target.value);
-              setCarId("");
-              setCategoryId("");
-            }}
-          >
-            <option value="">Selecione o modelo</option>
-            {models.data.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.name}
-              </option>
-            ))}
-          </select>
-          {models.loading && <span> carregando modelos...</span>}
-          {models.error && <span role="alert"> erro: {models.error}</span>}
-        </label>
-
-        <label>
-          Motorização
-          <select
-            value={carId}
-            disabled={!modelId}
-            onChange={(e) => {
-              setCarId(e.target.value);
-              setCategoryId("");
-            }}
-          >
-            <option value="">Selecione a motorização</option>
-            {cars.data.map((car) => (
-              <option key={car.id} value={car.id}>
-                {car.name}
-              </option>
-            ))}
-          </select>
-          {cars.loading && <span> carregando motorizações...</span>}
-          {cars.error && <span role="alert"> erro: {cars.error}</span>}
-        </label>
-
-        <label>
-          Categoria
-          <select
-            value={categoryId}
-            disabled={!carId}
-            onChange={(e) => setCategoryId(e.target.value)}
-          >
-            <option value="">Selecione a categoria</option>
-            {categoryOptions.map((opt) => (
-              <option key={opt.id} value={opt.id}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          {categories.loading && <span> carregando categorias...</span>}
-          {categories.error && <span role="alert"> erro: {categories.error}</span>}
-        </label>
-      </fieldset>
-
-      <section>
-        <h2>Resultados</h2>
-
-        {!categoryId && <p>Selecione marca, modelo, motorização e categoria pra ver produtos.</p>}
-        {results.loading && <p>Carregando resultados...</p>}
-        {results.error && <p role="alert">Erro ao buscar: {results.error}</p>}
-        {!results.loading && !results.error && categoryId && results.data.length === 0 && (
-          <p>Nenhum produto encontrado.</p>
-        )}
-
-        <ul>
-          {results.data.map((item) => (
-            <li key={item.product_id}>
-              {item.image && <img src={item.image} alt={item.name} width={80} />}
-              <div>
-                <strong>{item.name}</strong> — {item.brand} ({item.part_no})
-                <br />
-                {item.price ? `€${item.price}` : "preço indisponível"}
-                {item.availability && <> — {item.availability.text}</>}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+          </ul>
+        </section>
+      </main>
+    </div>
   );
 }

@@ -24,6 +24,10 @@ USER_AGENT = (
 )
 FORM_KEY_RE = re.compile(r'name="form_key"\s+type="hidden"\s+value="([^"]+)"')
 TIMEOUT = 10
+# Prefixo de tamanho usado pelo site pra montar a URL da imagem (achado
+# comparando com o <img src> real renderizado — não vem no JSON do Knockout,
+# é hardcoded no template do site para o thumbnail do product-box.card).
+IMAGE_SIZE_PREFIX = "248"
 
 
 class SupplierError(Exception):
@@ -224,7 +228,7 @@ def _flatten_product_groups(groups: list[dict]) -> list[dict]:
             image = None
             pictorama = product.get("pictorama") or []
             if pictorama:
-                image = pictorama[0]["url"] + pictorama[0]["id"]
+                image = pictorama[0]["url"] + IMAGE_SIZE_PREFIX + "/" + pictorama[0]["id"]
             items.append(
                 {
                     "product_id": str(product.get("id")),
