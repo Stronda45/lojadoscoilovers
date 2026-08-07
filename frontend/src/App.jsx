@@ -27,6 +27,8 @@ function useAsync(loader, deps, { skip } = {}) {
   return state;
 }
 
+const PAGE_SIZE = 12;
+
 function flattenCategories(groups) {
   const items = [];
   for (const group of groups) {
@@ -42,6 +44,7 @@ export default function App() {
   const [modelId, setModelId] = useState("");
   const [carId, setCarId] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [page, setPage] = useState(1);
 
   const makes = useAsync(getMakes, []);
   const models = useAsync(() => getModels(makeId), [makeId], { skip: !makeId });
@@ -54,6 +57,13 @@ export default function App() {
   );
 
   const categoryOptions = flattenCategories(categories.data);
+
+  useEffect(() => {
+    setPage(1);
+  }, [categoryId]);
+
+  const totalPages = Math.max(1, Math.ceil(results.data.length / PAGE_SIZE));
+  const pageItems = results.data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="app-shell">
@@ -165,7 +175,7 @@ export default function App() {
           )}
 
           <ul className="results-grid">
-            {results.data.map((item) => (
+            {pageItems.map((item) => (
               <li key={item.product_id} className="product-card">
                 <div className="product-card__image">
                   {item.image ? <img src={item.image} alt={item.name} loading="lazy" /> : <span>sem imagem</span>}
@@ -190,6 +200,24 @@ export default function App() {
               </li>
             ))}
           </ul>
+
+          {results.data.length > PAGE_SIZE && (
+            <div className="pagination">
+              <button type="button" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+                ← Anterior
+              </button>
+              <span>
+                Página {page} de {totalPages}
+              </span>
+              <button
+                type="button"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Próxima →
+              </button>
+            </div>
+          )}
         </section>
       </main>
     </div>

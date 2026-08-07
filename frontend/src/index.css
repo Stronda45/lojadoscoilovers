@@ -177,6 +177,37 @@ main {
   color: var(--primary);
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.pagination button {
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination button:not(:disabled):hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 .badge {
   align-self: flex-start;
   font-size: 12px;

@@ -44,6 +44,14 @@ expondo `/vehicles/*` e `/search`. Não estava no orçamento original da task
   `connectors/dtsshop.py::_flatten_product_groups` (constante
   `IMAGE_SIZE_PREFIX`).
 
+## Paginação (pedido do usuário, 2026-08-07)
+Client-side (12 por página) — **decisão**: backend já traz todos os
+resultados numa chamada só (a listagem do dtsshop.de não pagina, extrai
+tudo da página carregada via Playwright); paginar no backend exigiria
+rebuscar no fornecedor a cada página (mais lento, mais chamadas ao site
+real). Paginar só a exibição é imediato e sem risco. Reseta pra página 1
+a cada nova busca (`categoryId` muda).
+
 ## UI (pedido do usuário, 2026-08-07)
 Continua "sem design" por decisão de escopo, mas o usuário pediu um
 acabamento melhor que HTML cru — vai ser a primeira coisa que o cliente
