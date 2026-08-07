@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import Customer
+from .models import Customer, Order, OrderItem
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -36,3 +36,39 @@ class RegisterSerializer(serializers.Serializer):
             delivery_address=validated_data["delivery_address"],
         )
         return user
+
+
+class OrderItemInputSerializer(serializers.Serializer):
+    """Item enviado pelo frontend ao confirmar o pedido. product_id/product_name
+    vem do resultado da busca (task 08/09) — preço e disponibilidade NAO vem do
+    cliente, sao sempre re-consultados no fornecedor na hora de criar o pedido."""
+
+    product_id = serializers.CharField()
+    product_name = serializers.CharField()
+    quantity = serializers.IntegerField(min_value=1, default=1)
+
+
+class OrderCreateSerializer(serializers.Serializer):
+    items = OrderItemInputSerializer(many=True)
+
+    def validate_items(self, value):
+        if not value:
+            raise serializers.ValidationError("Pedido precisa ter pelo menos 1 item.")
+        return value
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = [
+            "id", "supplier_product_id", "product_name", "quantity",
+            "cost_price", "sale_price",
+        ]
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ["id", "status", "created_at", "updated_at", "items"]

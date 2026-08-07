@@ -25,6 +25,20 @@ Cliente final consegue criar conta e logar. Sem tela bonita — funcional.
 - Nome/telefone/endereço exigidos no cadastro (endereço já necessário pro
   fluxo de pedido da task 06 — evita pedir de novo depois).
 
+## Addendum (2026-08-07) — revisão de segurança
+Revisão automática no commit apontou 3 achados, endereçados:
+- **Sem rate limit em login/cadastro** (risco de força bruta) — `ScopedRateThrottle`
+  adicionado (`login`: 5/min, `register`: 10/hora, `config/settings.py`).
+- **Token sem forma de invalidar** — endpoint `POST /auth/logout` adicionado
+  (apaga o token atual). Token DRF continua sem expiração automática (aceito
+  pro escopo da Fase 1).
+- **Enumeração de e-mail no cadastro** (`"Já existe uma conta com este e-mail"`
+  revela se o e-mail já está cadastrado) — decisão: manter. É padrão de
+  mercado em cadastro (Google, GitHub fazem igual) e necessário pra UX (cliente
+  precisa saber que já tem conta e deve logar em vez de cadastrar de novo).
+  Diferente de enumeração no *login*, que não temos (mensagem de erro genérica
+  já cobre isso).
+
 ## Arquivos
 `backend/core/serializers.py`, `backend/core/views.py`,
 `backend/config/urls.py`, `backend/config/settings.py` (authtoken +
