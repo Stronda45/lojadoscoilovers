@@ -1,4 +1,4 @@
-# 10 — Deploy (Vercel + Railway)
+# 10 — Deploy (Railway — backend + frontend)
 
 Estimativa: 3h → **revisar para ~5h** (Playwright no Railway adiciona trabalho, ver
 abaixo) · Bloqueada por: 08, 09
@@ -6,11 +6,22 @@ abaixo) · Bloqueada por: 08, 09
 ## Objetivo
 Sistema acessível fora do ambiente local, pro cliente testar de verdade.
 
+## Decisão (2026-08-07): tudo no Railway, não Vercel+Railway
+Frontend também iria pro Vercel originalmente. Mudado pra **2 serviços dentro
+do mesmo projeto Railway** (backend+banco e frontend) — Railway roda
+container completo, então serve tanto o backend (que precisa de Playwright,
+não cabe em serverless) quanto um frontend estático sem problema. Motivo da
+troca: 1 conta/1 fatura é mais simples pro cliente (não-técnico) do que
+gerenciar 2 plataformas — não é uma questão de custo (frontend estático
+seria ~R$0 no Vercel Free de qualquer forma).
+
 ## Tarefas
 - [ ] Backend (Django+DRF) no Railway — DB Postgres também no Railway.
 - [ ] **Backend precisa de Dockerfile custom** (não o build automático padrão do
       Railway) — ver seção Playwright abaixo.
-- [ ] Frontend (React) na Vercel, apontando pra URL do backend em produção.
+- [ ] Frontend (React) como 2º serviço no mesmo projeto Railway (build estático
+      + servidor simples, ex: Caddy/serve), apontando pra URL do backend em
+      produção via `VITE_API_BASE_URL`.
 - [ ] Variáveis de ambiente configuradas nos dois (SMTP, DB, CORS de produção).
 - [ ] Confirmar: hospedagem é custo do cliente (já avisado na proposta) — usar o
       cartão/conta dele, não a sua.
@@ -54,3 +65,11 @@ adicionar esse argumento condicionalmente (ex: via variável de ambiente) em
 - [ ] Busca (via Playwright) funcionando em produção, não só localmente.
 - [ ] Cliente avisado sobre o impacto de custo/latência do Playwright antes do
       lançamento (não depois, na fatura).
+
+## Pendências antes de começar (aguardando o cliente)
+- E-mail (colaborador no repositório GitHub)
+- Conta Railway (+ cartão — plano pago, ver acima)
+- Domínio desejado
+- E-mail/SMTP de produção pro alerta de pedido (não pode ser conta pessoal
+  do freelancer)
+- Valores da margem por faixa de preço (`investigar.md`)

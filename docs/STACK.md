@@ -13,11 +13,18 @@
 - PWA (instalável em celular/desktop)
 
 ## Deploy
-- Backend + banco: Railway
-- Frontend: Vercel
-- Hospedagem é custo do cliente, não nosso (ver proposta)
+- **Tudo no Railway** (backend + banco + frontend, 2 serviços num projeto só).
+  **Decisão (2026-08-07)**: frontend também iria pro Vercel originalmente, mas
+  Railway roda container completo (sem a limitação serverless do Vercel que
+  bloqueia o backend/Playwright) e consolidar em 1 conta/1 fatura é mais
+  simples pro cliente (não-técnico) gerenciar do que 2 plataformas. Não é
+  mais barato necessariamente (frontend estático custaria ~R$0 no Vercel
+  Free de qualquer forma) — o ganho é operacional, não financeiro.
+- Hospedagem é custo do cliente, não nosso (ver proposta) — plano Railway
+  provavelmente precisa ser o pago (~$20/mês) por causa do Playwright, ver
+  `docs/PLAYWRIGHT.md`.
 - Deploy do backend precisa de Dockerfile custom por causa do Playwright — ver
-  `docs/PLAYWRIGHT.md` e `tasks/10-deploy.md`
+  `docs/PLAYWRIGHT.md` e `tasks/10-deploy.md`.
 
 ## Fonte de dados (fornecedor)
 - dtsshop.de — conector híbrido:
