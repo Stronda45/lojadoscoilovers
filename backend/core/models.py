@@ -18,12 +18,13 @@ class Customer(models.Model):
 
 
 class MarginRule(models.Model):
-    """Regra de precificacao ativa. Singleton editavel via /admin — trocar o modo
-    ou o valor NAO exige deploy, so mudar aqui.
+    """Regra de precificacao padrao (fallback). Singleton editavel via /admin —
+    trocar o modo ou o valor NAO exige deploy, so mudar aqui.
 
-    Pendente: cliente disse "1.30 do preco" mas nao confirmou se e multiplicador
-    (1.30 = +30%) ou percentual (1.30% = +0.013x). Default fica em fixed_amount=50
-    (o que ja foi orcado) ate ele confirmar. Ver investigar.md.
+    Cliente pediu faixas de preco com taxa diferente por faixa (ver
+    `MarginTier`), entao esta regra so e usada quando nenhuma faixa cadastrada
+    bate com o preco (ou nenhuma faixa existe ainda). Default fica em
+    fixed_amount=50 (o que ja foi orcado). Ver investigar.md.
     """
 
     FIXED_AMOUNT = "fixed_amount"
@@ -57,8 +58,54 @@ class MarginRule(models.Model):
         verbose_name_plural = "Regra de margem"
 
 
+class MarginTier(models.Model):
+    """Faixa de preco com regra propria (pedido do cliente: taxa diferente por
+    faixa, ex: <100 EUR vs 100-500 EUR). Percentuais/valores ainda nao
+    confirmados pelo cliente — cadastro fica vazio ate ele mandar os numeros
+    (ver investigar.md). Enquanto nao houver faixas, `apply_margin` cai pra
+    `MarginRule` (regra fixa unica)."""
+
+    FIXED_AMOUNT = MarginRule.FIXED_AMOUNT
+    MULTIPLIER = MarginRule.MULTIPLIER
+    MODE_CHOICES = MarginRule.MODE_CHOICES
+
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0"))
+    max_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+        help_text="Vazio = sem limite superior",
+    )
+    mode = models.CharField(max_length=20, choices=MODE_CHOICES, default=FIXED_AMOUNT)
+    value = models.DecimalField(max_digits=10, decimal_places=4, default=Decimal("50"))
+
+    class Meta:
+        ordering = ["min_price"]
+        verbose_name = "Faixa de margem"
+        verbose_name_plural = "Faixas de margem"
+
+    def __str__(self):
+        upper = str(self.max_price) if self.max_price is not None else "sem limite"
+        return f"{self.min_price} - {upper}: {self.get_mode_display()} ({self.value})"
+
+    def matches(self, cost_price: Decimal) -> bool:
+        if cost_price < self.min_price:
+            return False
+        if self.max_price is not None and cost_price >= self.max_price:
+            return False
+        return True
+
+    def apply(self, cost_price: Decimal) -> Decimal:
+        if self.mode == self.MULTIPLIER:
+            return (cost_price * self.value).quantize(Decimal("0.01"))
+        return (cost_price + self.value).quantize(Decimal("0.01"))
+
+
 def apply_margin(cost_price: Decimal) -> Decimal:
-    """Atalho: preco de venda a partir do preco de custo, usando a regra ativa."""
+    """Preco de venda a partir do preco de custo. Usa a primeira `MarginTier`
+    cuja faixa bate com o preco; se nenhuma faixa existir/bater, cai pra
+    `MarginRule` (regra fixa unica)."""
+    for tier in MarginTier.objects.all():
+        if tier.matches(cost_price):
+            return tier.apply(cost_price)
     return MarginRule.active().apply(cost_price)
 
 

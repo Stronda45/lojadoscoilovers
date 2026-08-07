@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Customer, MarginRule, Order, OrderItem
+from .models import Customer, MarginRule, MarginTier, Order, OrderItem
 
 
 @admin.register(Customer)
@@ -19,6 +19,12 @@ class MarginRuleAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(MarginTier)
+class MarginTierAdmin(admin.ModelAdmin):
+    list_display = ["min_price", "max_price", "mode", "value"]
+    ordering = ["min_price"]
 
 
 class OrderItemInline(admin.TabularInline):

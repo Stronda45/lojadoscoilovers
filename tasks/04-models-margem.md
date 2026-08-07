@@ -35,3 +35,18 @@ Estrutura de dados do negócio (cliente final + pedido) e a regra de preço de v
 ## Arquivos
 `backend/core/models.py`, `backend/core/admin.py`, `backend/core/apps.py`,
 `backend/core/migrations/0001_initial.py`
+
+## Addendum (2026-08-07)
+Cliente recusou o multiplicador fixo (1.30×), quer taxa variável por faixa de
+preço (ex: abaixo de 100 EUR uma taxa, entre 100-500 outra). Ainda não mandou
+os valores.
+
+- [x] Model `MarginTier` — faixa (`min_price`/`max_price`) + `mode`/`value`
+      (mesma estrutura fixed_amount/multiplier da `MarginRule`). Editável via
+      `/admin`, sem deploy.
+- [x] `apply_margin()` agora percorre as `MarginTier` cadastradas e usa a
+      primeira que bate com o preço; se nenhuma existir/bater, cai pra
+      `MarginRule` (mantém o default de 50 EUR já orçado).
+- [x] Migration `0002_margintier.py` criada e aplicada.
+- Cadastro de faixas fica vazio até o cliente confirmar os percentuais — ver
+  `investigar.md`.

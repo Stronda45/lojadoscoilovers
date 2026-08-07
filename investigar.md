@@ -1,4 +1,4 @@
-# Investigar depois
+jj20405# Investigar depois
 
 Coisas que identificamos mas não vale parar o sprint agora pra resolver. Ler antes de
 fechar cada fase, pra não esquecer.
@@ -14,9 +14,10 @@ fechar cada fase, pra não esquecer.
 - [ ] **Postgres local quebrado** (Homebrew `postgresql@13`, lib `icu4c` faltando).
       Não bloqueia (SQLite local resolve por ora), mas resolver antes de precisar
       testar algo Postgres-específico localmente.
-- [ ] **Margem "1.30"**: ainda não confirmado com o cliente se é 1,30× (+30%) ou
-      1,30% (+0,013×). Código já suporta os dois modos (task 04), só falta o valor
-      certo.
+- [ ] **Margem por faixa de preço**: cliente recusou o 1.30× fixo, quer taxa
+      variável por faixa (ex: <100 EUR vs 100-500 EUR), mas ainda não mandou os
+      valores/percentuais de cada faixa. Estrutura já pronta (`MarginTier`,
+      task 04) — só falta ele confirmar os números e cadastrar via `/admin`.
 
 ## Resolvidas (mantido como histórico rápido)
 
