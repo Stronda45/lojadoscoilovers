@@ -26,6 +26,12 @@ fechar cada fase, pra não esquecer.
       dtsshop.de (só validamos endpoints de listagem/busca). E-mail hoje só
       manda o `id` do fornecedor + instrução pra buscar manualmente. Se
       confirmarmos a URL, dá pra linkar direto.
+- [ ] **Contagem de categoria vs. resultados retornados** (task 08): categoria
+      "Top mount" mostrava `count: 2` mas a busca filtrada por carro devolveu
+      1 produto. Provavelmente o `count` da categoria é do catálogo geral, não
+      filtrado pelo carro selecionado — não é erro no código (testado ao
+      vivo, sem exceção), só uma discrepância de expectativa. Não afeta a
+      função (mostra o que realmente está disponível pra aquele carro).
 - [ ] **Margem por faixa de preço**: cliente recusou o 1.30× fixo, quer taxa
       variável por faixa (ex: <100 EUR vs 100-500 EUR), mas ainda não mandou os
       valores/percentuais de cada faixa. Estrutura já pronta (`MarginTier`,
