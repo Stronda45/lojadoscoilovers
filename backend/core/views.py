@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 
 from .connectors.dtsshop import SupplierError, get_price_and_availability
+from .email_utils import send_new_order_alert_email
 from .models import Order, OrderItem, apply_margin
 from .serializers import OrderCreateSerializer, OrderSerializer, RegisterSerializer
 
@@ -103,6 +104,8 @@ def orders(request):
                 cost_price=cost_price,
                 sale_price=apply_margin(cost_price),
             )
+
+    send_new_order_alert_email(order)
 
     return Response(
         {**OrderSerializer(order).data, 'aviso': DISPONIBILIDADE_AVISO},

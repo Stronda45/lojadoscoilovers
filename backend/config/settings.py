@@ -140,9 +140,25 @@ STATIC_URL = 'static/'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+# Default: console backend (imprime no terminal, sem credenciais) — bom pra dev
+# local. Produção define EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+# via env (Railway) + as credenciais SMTP reais.
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+
+# Corta o envio de verdade em testes automatizados, mantendo o log — evita
+# mandar e-mail real sem querer rodando a suite.
+EMAIL_DISABLE_OUTBOUND = os.environ.get('EMAIL_DISABLE_OUTBOUND', 'False') == 'True'
+
+# E-mail(s) do dono/equipe que recebem o alerta de pedido novo.
+TEAM_ALERT_EMAILS = [
+    e.strip() for e in os.environ.get('TEAM_ALERT_EMAILS', '').split(',') if e.strip()
+]

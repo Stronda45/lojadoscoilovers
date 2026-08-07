@@ -14,6 +14,11 @@ fechar cada fase, pra não esquecer.
 - [ ] **Postgres local quebrado** (Homebrew `postgresql@13`, lib `icu4c` faltando).
       Não bloqueia (SQLite local resolve por ora), mas resolver antes de precisar
       testar algo Postgres-específico localmente.
+- [ ] **Link direto pro produto no e-mail de alerta de pedido** (task 07): não
+      confirmamos o padrão de URL da página de detalhe de produto do
+      dtsshop.de (só validamos endpoints de listagem/busca). E-mail hoje só
+      manda o `id` do fornecedor + instrução pra buscar manualmente. Se
+      confirmarmos a URL, dá pra linkar direto.
 - [ ] **Margem por faixa de preço**: cliente recusou o 1.30× fixo, quer taxa
       variável por faixa (ex: <100 EUR vs 100-500 EUR), mas ainda não mandou os
       valores/percentuais de cada faixa. Estrutura já pronta (`MarginTier`,
