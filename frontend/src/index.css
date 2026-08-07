@@ -103,11 +103,14 @@ main {
 
 .hero {
   background:
-    linear-gradient(120deg, rgba(31, 58, 147, 0.88), rgba(22, 41, 94, 0.92)),
-    url("/hero-car.jpg") center 35% / cover no-repeat;
+    linear-gradient(90deg, rgba(15, 27, 74, 0.75) 0%, rgba(15, 27, 74, 0.35) 55%, rgba(15, 27, 74, 0.05) 100%),
+    url("/hero-car.jpg") center 42% / cover no-repeat;
   border-radius: var(--radius);
   color: #fff;
-  padding: 48px 28px;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  padding: 32px;
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -117,14 +120,16 @@ main {
 }
 
 .hero__text h1 {
-  margin: 0 0 6px;
-  font-size: 28px;
+  margin: 0 0 8px;
+  font-size: 32px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }
 
 .hero__text p {
   margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
+  font-size: 15px;
+  opacity: 0.95;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 .filters {
