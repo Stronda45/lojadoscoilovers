@@ -32,6 +32,13 @@ fechar cada fase, pra não esquecer.
       filtrado pelo carro selecionado — não é erro no código (testado ao
       vivo, sem exceção), só uma discrepância de expectativa. Não afeta a
       função (mostra o que realmente está disponível pra aquele carro).
+- [ ] **Fornecedor retorna "not found" pra alguns `product_id`** — visto ao
+      vivo em produtos de rodas/wheels (categoria "Unlimited Base Wheels...",
+      AUDI/ACURA). `GetProductsPriceAndAvailability` devolve
+      `["<id> not found."]` em vez do dict de preço pra esses IDs, mesmo eles
+      aparecendo normalmente na listagem. Causou um 500 (corrigido — task 08,
+      agora trata como indisponível). Não investigado o motivo raiz (produto
+      descontinuado no fornecedor? id de listagem ≠ id de preço pra rodas?).
 - [ ] **Margem por faixa de preço**: cliente recusou o 1.30× fixo, quer taxa
       variável por faixa (ex: <100 EUR vs 100-500 EUR), mas ainda não mandou os
       valores/percentuais de cada faixa. Estrutura já pronta (`MarginTier`,

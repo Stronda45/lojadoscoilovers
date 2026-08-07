@@ -31,6 +31,13 @@ Resolvido e documentado em `tasks/02-conector-dtsshop-json.md` (addendum
 expondo `/vehicles/*` e `/search`. Não estava no orçamento original da task
 08 (~2h extras).
 
+## Bug encontrado no teste manual do usuário (corrigido)
+Categoria de rodas (AUDI/ACURA, "Unlimited Base Wheels...") causava 500: o
+fornecedor devolve `["<id> not found."]` (lista de erro) em vez do dict de
+preço pra alguns `product_id` — `_enrich_with_price` assumia sempre dict e
+quebrava. Corrigido pra tratar como indisponível (`price: null`, frontend já
+mostra "preço indisponível"). Ver `investigar.md`.
+
 ## Arquivos
 `frontend/` (scaffold Vite + React), `frontend/src/App.jsx`,
 `frontend/src/api.js`, `frontend/src/index.css`,

@@ -28,7 +28,11 @@ def _enrich_with_price(items: list[dict]) -> list[dict]:
     enriched = []
     for item in items:
         info = price_data.get(item["product_id"])
-        if info is not None:
+        # Fornecedor às vezes devolve `["<id> not found."]` (lista de erro) em
+        # vez do dict de preço — acontece pra alguns produtos (visto em
+        # rodas/wheels). Trata como indisponível em vez de quebrar a busca
+        # inteira por causa de 1 produto.
+        if isinstance(info, dict) and "price" in info:
             cost_price = Decimal(str(info["price"]))
             item = {
                 **item,
