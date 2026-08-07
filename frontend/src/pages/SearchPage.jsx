@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createOrder, getCars, getCategories, getMakes, getModels, search } from "../api";
 import { useAuth } from "../auth";
+import Hero from "../components/Hero";
 
 const PAGE_SIZE = 12;
 
@@ -69,6 +70,16 @@ export default function SearchPage() {
   const totalPages = Math.max(1, Math.ceil(results.data.length / PAGE_SIZE));
   const pageItems = results.data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  function clearFilters() {
+    setMakeId("");
+    setModelId("");
+    setCarId("");
+    setCategoryId("");
+    setOrderState({});
+  }
+
+  const hasFilters = makeId || modelId || carId || categoryId;
+
   async function handleOrder(item) {
     if (!auth) {
       setOrderState((prev) => ({
@@ -94,8 +105,15 @@ export default function SearchPage() {
 
   return (
     <>
+      <Hero />
+
       <fieldset className="filters">
         <legend>Encontre a peça certa pro seu veículo</legend>
+        {hasFilters && (
+          <button type="button" className="clear-button" onClick={clearFilters}>
+            Limpar pesquisa
+          </button>
+        )}
 
         <div className="filters-grid">
           <label>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Link, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth";
+import Logo from "./components/Logo";
 import LoginPage from "./pages/LoginPage";
 import OrdersPage from "./pages/OrdersPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -41,6 +42,7 @@ export default function App() {
         <div className="app-shell">
           <header className="topbar">
             <Link to="/" className="brand-link">
+              <Logo size={26} />
               <span className="brand">lojadoscoilovers</span>
               <span className="tagline">peças e suspensões pro seu carro</span>
             </Link>

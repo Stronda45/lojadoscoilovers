@@ -44,6 +44,16 @@ expondo `/vehicles/*` e `/search`. Não estava no orçamento original da task
   `connectors/dtsshop.py::_flatten_product_groups` (constante
   `IMAGE_SIZE_PREFIX`).
 
+## Logo + banner + limpar pesquisa (pedido do usuário, 2026-08-07)
+Mesmo motivo da UI acima — faltando 2 dias pra entrega. Adicionado:
+- Logo placeholder (SVG inline, mola de suspensão estilizada) no header.
+- Banner/hero na página de busca (SVG inline, sem foto de banco de imagens —
+  evita risco de licença, mantém o bundle autocontido).
+- Botão "Limpar pesquisa" (aparece só quando algum filtro está ativo,
+  reseta marca/modelo/motorização/categoria de uma vez).
+Continua sem imagem de marca real do cliente — placeholder até ele mandar
+algo (ou aprovar o SVG genérico como está).
+
 ## Paginação (pedido do usuário, 2026-08-07)
 Client-side (12 por página) — **decisão**: backend já traz todos os
 resultados numa chamada só (a listagem do dtsshop.de não pagina, extrai

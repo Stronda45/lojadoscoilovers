@@ -101,7 +101,48 @@ main {
   flex: 1;
 }
 
+.hero {
+  background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+  border-radius: var(--radius);
+  color: #fff;
+  padding: 28px 28px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.hero__text h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.hero__text p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.hero__illustration {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.hero__illustration svg {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 640px) {
+  .hero__illustration {
+    display: none;
+  }
+}
+
 .filters {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -114,6 +155,24 @@ main {
   padding: 0 8px;
   font-weight: 600;
   color: var(--text);
+}
+
+.clear-button {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 13px;
+  color: var(--primary);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  border-color: var(--primary);
+  background: #f0f3fb;
 }
 
 .filters-grid {
