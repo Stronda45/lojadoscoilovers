@@ -4,11 +4,14 @@
 - **React + Vite** (não Next.js/CRA). Fase 1 é SPA simples consumindo REST —
   não precisa de SSR/rotas de servidor do Next. Vite é mais rápido pra
   scaffold/dev e é o padrão atual pra SPA React sem framework full-stack.
-- **Sem bibliotecas extras** (sem axios, sem react-query/swr, sem router
-  ainda) — `fetch` nativo + um hook pequeno (`useAsync`) cobrem o que a
-  Fase 1 precisa (uma tela). Adicionar lib só quando o projeto pedir
-  (múltiplas rotas na task 09, por exemplo, aí sim considerar
-  `react-router`).
+- **Sem bibliotecas extras** além de `react-router-dom` (adicionada na task
+  09, como já previsto aqui — múltiplas telas precisavam de rotas). Sem
+  axios, sem react-query/swr — `fetch` nativo + um hook pequeno (`useAsync`)
+  cobrem o que a Fase 1 precisa.
+  - `npm audit` acusa 2 "high" em `react-router` (CSRF bypass em "RSC
+    Mode") — não se aplica aqui: app é SPA client-side puro
+    (`BrowserRouter`), sem React Server Components. Decisão: manter a
+    versão instalada, não fazer downgrade forçado.
 - **Sem CSS framework/design system** — Fase 1 é "sem design" por decisão de
   escopo (ver `tasks/00-overview.md`). CSS em `index.css` é só o mínimo pra
   não ficar ilegível.
