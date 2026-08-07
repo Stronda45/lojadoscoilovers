@@ -102,43 +102,29 @@ main {
 }
 
 .hero {
-  background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+  background:
+    linear-gradient(120deg, rgba(31, 58, 147, 0.88), rgba(22, 41, 94, 0.92)),
+    url("/hero-car.jpg") center 35% / cover no-repeat;
   border-radius: var(--radius);
   color: #fff;
-  padding: 28px 28px;
+  padding: 48px 28px;
   margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   overflow: hidden;
+}
+
+.hero__text {
+  max-width: 480px;
 }
 
 .hero__text h1 {
   margin: 0 0 6px;
-  font-size: 24px;
+  font-size: 28px;
 }
 
 .hero__text p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.85;
-}
-
-.hero__illustration {
-  width: 160px;
-  flex-shrink: 0;
-}
-
-.hero__illustration svg {
-  width: 100%;
-  height: auto;
-}
-
-@media (max-width: 640px) {
-  .hero__illustration {
-    display: none;
-  }
+  opacity: 0.9;
 }
 
 .filters {

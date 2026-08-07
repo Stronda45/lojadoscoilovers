@@ -47,8 +47,12 @@ expondo `/vehicles/*` e `/search`. Não estava no orçamento original da task
 ## Logo + banner + limpar pesquisa (pedido do usuário, 2026-08-07)
 Mesmo motivo da UI acima — faltando 2 dias pra entrega. Adicionado:
 - Logo placeholder (SVG inline, mola de suspensão estilizada) no header.
-- Banner/hero na página de busca (SVG inline, sem foto de banco de imagens —
-  evita risco de licença, mantém o bundle autocontido).
+- Banner/hero na página de busca — pedido do usuário pra usar uma foto real
+  (`frontend/public/hero-car.jpg`, Pexels, uso livre) em vez do SVG genérico
+  original. Foto escolhida em vez do vídeo (também disponível, gerado por
+  IA) por peso: 600KB vs 11MB — vídeo deixaria o carregamento mais lento,
+  principalmente no celular, sem ganho real pro "gostinho" que o usuário
+  queria mostrar ao cliente.
 - Botão "Limpar pesquisa" (aparece só quando algum filtro está ativo,
   reseta marca/modelo/motorização/categoria de uma vez).
 Continua sem imagem de marca real do cliente — placeholder até ele mandar
