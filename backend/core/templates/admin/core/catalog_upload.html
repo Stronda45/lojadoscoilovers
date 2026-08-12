@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Importar catálogo</h1>
+<p>Sobe um arquivo de fornecedor (MTS, TA Technix, Cheney ou ES2WHEELS) — produtos
+   já existentes (mesma referência) são atualizados, produtos que sumiram do arquivo
+   mais novo ficam inativos (não são apagados).</p>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+  </table>
+  <input type="submit" value="Importar" class="default">
+</form>
+{% endblock %}

@@ -115,3 +115,77 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_name} x{self.quantity}"
+
+
+class Supplier(models.Model):
+    """Fornecedor de catálogo importado via Excel/CSV (Fase 2, task 04 — ver
+    docs/EXCEL-IMPORT.md). Diferente do dtsshop.de: não é consultado ao vivo,
+    o catálogo fica no banco, atualizado por upload."""
+
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    selected_fields = models.JSONField(
+        default=list, blank=True,
+        help_text="Nomes dos campos de raw_attributes que o cliente escolheu "
+                   "exibir/usar pra esse fornecedor.",
+    )
+
+    class Meta:
+        verbose_name = "Fornecedor (catálogo importado)"
+        verbose_name_plural = "Fornecedores (catálogo importado)"
+
+    def __str__(self):
+        return self.name
+
+
+class ImportedProduct(models.Model):
+    """Produto de um catálogo importado (Excel/CSV). Deduplicado por
+    (supplier, external_reference) — upload recorrente atualiza em vez de
+    duplicar; produto que sumiu do arquivo mais recente fica active=False,
+    nunca é apagado (mantém histórico/pedidos já feitos íntegros)."""
+
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name="products")
+    external_reference = models.CharField(max_length=100)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    image_url = models.URLField(blank=True, max_length=500)
+    category = models.CharField(max_length=255, blank=True)
+    raw_attributes = models.JSONField(default=dict, blank=True)
+    active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["supplier", "external_reference"], name="unique_product_per_supplier",
+            )
+        ]
+        indexes = [models.Index(fields=["supplier", "active"])]
+
+    def __str__(self):
+        return f"[{self.supplier.name}] {self.title} ({self.external_reference})"
+
+    @property
+    def sale_price(self) -> Decimal | None:
+        if self.cost_price is None:
+            return None
+        return apply_margin(self.cost_price)
+
+
+class ImportedProductFitment(models.Model):
+    """Compatibilidade de veículo de um produto importado (só existe pra
+    fornecedores que têm fitment — MTS, TA Technix; vazio pra rodas). Uma
+    linha por combinação marca/modelo/motor compatível."""
+
+    product = models.ForeignKey(ImportedProduct, on_delete=models.CASCADE, related_name="fitments")
+    make = models.CharField(max_length=100)
+    model = models.CharField(max_length=150)
+    variant = models.CharField(max_length=150, blank=True)
+    year_range = models.CharField(max_length=50, blank=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["make", "model"])]
+
+    def __str__(self):
+        return f"{self.make} {self.model} {self.variant}".strip()

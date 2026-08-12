@@ -1,13 +1,13 @@
 # Import de Excel/CSV de outros fornecedores — Fase 2
 
-**Status: bloqueada.** Não estava no escopo original da Fase 2 (`proposta-v2-
-intermediario.pdf`) — surgiu numa conversa à parte com o cliente. Antes de
-implementar, precisa: (a) alinhar com o cliente se entra nos €1.200 ou é cobrado à
-parte, (b) respostas da seção 7 de `perguntas-para-cliente.txt`.
-
-Este doc registra o que já sabemos pelos arquivos reais (`csvs.rar`, mandado pelo
-cliente, inspecionado em 2026-08-12) — pra quando a implementação começar, o desenho
-já estar pronto.
+**Status: parcialmente implementada** (2026-08-12) — models, parsers dos 4
+fornecedores, upload com segurança e upsert já funcionam, testados contra os
+arquivos reais. Não estava no escopo original da Fase 2 (`proposta-v2-
+intermediario.pdf`) — surgiu numa conversa à parte com o cliente. Falta pra
+fechar: (a) alinhar com o cliente se entra nos €1.200 ou é cobrado à parte,
+(b) respostas da seção 7 de `perguntas-para-cliente.txt`, (c) tela de busca
+no frontend. Ver `tasks/fase2/04-import-excel-csv.md` pro detalhe do que já
+foi feito vs. pendente.
 
 ## Os 4 fornecedores são muito diferentes entre si
 
@@ -73,8 +73,15 @@ reusa a regra de margem/faixa de preço, não inventa uma nova.
 **Decisão revista**: o cliente vai poder subir os arquivos ele mesmo, sempre que
 precisar (não depende de comando rodado por nós). Parser continua **dedicado por
 fornecedor** (4 funções conhecidas, não um mapeamento genérico de colunas — os
-formatos já são conhecidos, isso não muda). O que muda é só a entrada: um endpoint
-de upload no admin em vez de management command.
+formatos já são conhecidos, isso não muda).
+
+**Implementado dentro do Django Admin**, não como endpoint de API separado —
+`ImportedProductAdmin.upload_view` (`core/admin.py`), sessão do admin, não token.
+Pensamos primeiro num endpoint DRF (`POST /catalog/upload` com `IsAdminUser`), mas
+isso não bate com a decisão da task 02 (painel = Django Admin, dono/funcionário
+autenticam por sessão, não têm/usam token de API) — corrigido antes de ir pra
+produção. `GET /catalog/search` continua como endpoint DRF público de verdade
+(consumido pelo frontend, como o `/search` do dtsshop.de).
 
 ### O limite real: o arquivo master da MTS (206MB)
 
@@ -150,6 +157,29 @@ veículo compartilhada). Duas variantes possíveis dependendo da resposta à per
   Playwright/scraping — é só uma query no banco).
 - **Sem fitment** (fallback se o cliente preferir simples): busca por texto/
   categoria direto em `ImportedProduct`, ignora `ImportedProductFitment`.
+
+## Achados testando contra os arquivos reais (não amostras)
+
+- **MTS usa vírgula decimal** ("707,25", "699"), não ponto como parecia pelo
+  primeiro exemplo inspecionado — corrigido pra usar o mesmo parser europeu
+  da TA Technix.
+- **TA Technix "Hersteller" nem sempre é 1 marca limpa**: pode ter várias
+  ("passend für Audi / Seat / VW") ou ser lixo/peça universal ("Universell",
+  "1 Set") — tratado como 0-N fitments, não erro de parsing.
+- **Rodas não têm coluna de SKU** — referência construída a partir de
+  modelo+medida+furação+offset+acabamento.
+- **Desativação por fornecedor inteiro estava errada**: a MTS manda 1
+  arquivo por categoria — sem escopar a desativação por categoria, importar
+  o 2º arquivo apagava (desativava) o 1º. Corrigido, coberto por teste de
+  regressão.
+- **Gap de permissão no upload**: `admin_view()` do Django só garante
+  `is_staff`, não checa permissão de model pra URLs customizadas — um
+  funcionário sem permissão em `ImportedProduct` conseguia acessar a página
+  de upload só adivinhando a URL. Fechado com checagem explícita de
+  `has_add_permission`.
+
+63 testes automatizados (32 da task 03 + 31 novos) cobrem os pontos acima —
+`backend/core/tests_importers.py`.
 
 ## Pendências (ver `perguntas-para-cliente.txt`, seção 7)
 - Importar só o master da MTS, só os recortes por categoria, ou os dois? (Se

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core.catalog_views import catalog_search
 from core.search_views import (
     search,
     vehicle_cars,
@@ -39,4 +40,5 @@ urlpatterns = [
     path('vehicles/cars', vehicle_cars),
     path('vehicles/<str:car_id>/categories', vehicle_categories),
     path('search', search),
+    path('catalog/search', catalog_search),
 ]
