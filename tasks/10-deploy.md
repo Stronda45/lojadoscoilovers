@@ -67,9 +67,12 @@ adicionar esse argumento condicionalmente (ex: via variável de ambiente) em
       lançamento (não depois, na fatura).
 
 ## Pendências antes de começar (aguardando o cliente)
-- E-mail (colaborador no repositório GitHub)
-- Conta Railway (+ cartão — plano pago, ver acima)
-- Domínio desejado
-- E-mail/SMTP de produção pro alerta de pedido (não pode ser conta pessoal
-  do freelancer)
-- Valores da margem por faixa de preço (`investigar.md`)
+- [ ] E-mail (colaborador no repositório GitHub) — ainda não respondido.
+- [ ] Conta Railway (+ cartão — plano pago, ver acima) — ainda não respondido.
+- [x] Domínio: **.pt** (não .br) — confirmado 2026-08-12 (`conversa.md`).
+      Registro em si ainda pendente (não disse se já tem ou precisa registrar).
+- [x] E-mail de produção pro alerta de pedido: **lojadoscoilovers@gmail.com**
+      — confirmado 2026-08-12. Falta gerar a senha de app (Gmail) quando for
+      configurar o `.env` de produção.
+- [x] Valores da margem — resolvido antes (tabela de interpolação, ver
+      `docs/PRICING.md`).
