@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
 from rest_framework import serializers
 
 from .models import Customer, Order, OrderItem
@@ -12,6 +13,7 @@ class RegisterSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
     phone = serializers.CharField(max_length=30)
     delivery_address = serializers.CharField()
+    accepts_terms = serializers.BooleanField(write_only=True)
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
@@ -20,6 +22,11 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate_password(self, value):
         validate_password(value)
+        return value
+
+    def validate_accepts_terms(self, value):
+        if not value:
+            raise serializers.ValidationError("É preciso aceitar os termos pra criar conta.")
         return value
 
     def create(self, validated_data):
@@ -34,6 +41,7 @@ class RegisterSerializer(serializers.Serializer):
             user=user,
             phone=validated_data["phone"],
             delivery_address=validated_data["delivery_address"],
+            consent_accepted_at=timezone.now(),
         )
         return user
 

@@ -11,6 +11,10 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer")
     phone = models.CharField(max_length=30)
     delivery_address = models.TextField()
+    consent_accepted_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text="Quando o cliente aceitou os termos no cadastro (RGPD).",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

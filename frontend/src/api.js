@@ -65,7 +65,7 @@ export function search({ categoryId, carId, makeId, modelId }) {
   });
 }
 
-export function register({ email, password, firstName, lastName, phone, deliveryAddress }) {
+export function register({ email, password, firstName, lastName, phone, deliveryAddress, acceptsTerms }) {
   return apiPost("/auth/register", {
     email,
     password,
@@ -73,6 +73,7 @@ export function register({ email, password, firstName, lastName, phone, delivery
     last_name: lastName,
     phone,
     delivery_address: deliveryAddress,
+    accepts_terms: acceptsTerms,
   });
 }
 
@@ -90,4 +91,8 @@ export function createOrder(items, token) {
 
 export function listOrders(token) {
   return request("GET", "/orders", { token });
+}
+
+export function deleteAccount(token) {
+  return request("DELETE", "/auth/me", { token });
 }

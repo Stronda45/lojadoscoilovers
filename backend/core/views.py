@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal
 
 from django.contrib.auth import authenticate
@@ -64,6 +65,34 @@ def logout(request):
     """Invalida o token atual — unica forma de 'derrubar' uma sessao, ja que
     token DRF nao expira sozinho (achado da revisao de seguranca)."""
     request.user.auth_token.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    """RGPD: anonimiza em vez de apagar — Order tem on_delete=PROTECT pro
+    Customer, entao o historico de pedido (contabilidade, disputa com
+    fornecedor) sobrevive. So os dados pessoais identificaveis somem."""
+    user = request.user
+    customer = user.customer
+    anon_id = uuid.uuid4().hex[:12]
+
+    with transaction.atomic():
+        customer.phone = "[dado removido]"
+        customer.delivery_address = "[dado removido]"
+        customer.save(update_fields=['phone', 'delivery_address'])
+
+        user.email = f"deleted-{anon_id}@anon.local"
+        user.username = f"deleted-{anon_id}"
+        user.first_name = ""
+        user.last_name = ""
+        user.is_active = False
+        user.set_unusable_password()
+        user.save()
+
+        Token.objects.filter(user=user).delete()
+
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 

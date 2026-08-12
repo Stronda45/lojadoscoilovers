@@ -1,6 +1,7 @@
 import { BrowserRouter, Link, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth";
 import Logo from "./components/Logo";
+import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/LoginPage";
 import OrdersPage from "./pages/OrdersPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -21,6 +22,7 @@ function Nav() {
         <>
           <span className="nav__email">{auth.email}</span>
           <Link to="/pedidos">Meus pedidos</Link>
+          <Link to="/conta">Minha conta</Link>
           <button type="button" onClick={handleLogout}>
             Sair
           </button>
@@ -55,6 +57,7 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
               <Route path="/pedidos" element={<OrdersPage />} />
+              <Route path="/conta" element={<AccountPage />} />
             </Routes>
           </main>
         </div>

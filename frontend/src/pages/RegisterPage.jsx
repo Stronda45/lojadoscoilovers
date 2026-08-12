@@ -9,6 +9,7 @@ const EMPTY_FORM = {
   password: "",
   phone: "",
   deliveryAddress: "",
+  acceptsTerms: false,
 };
 
 export default function RegisterPage() {
@@ -20,6 +21,10 @@ export default function RegisterPage() {
 
   function update(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  }
+
+  function updateCheckbox(field) {
+    return (e) => setForm((prev) => ({ ...prev, [field]: e.target.checked }));
   }
 
   async function handleSubmit(e) {
@@ -63,6 +68,15 @@ export default function RegisterPage() {
         <label>
           Endereço de entrega
           <textarea value={form.deliveryAddress} onChange={update("deliveryAddress")} required />
+        </label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={form.acceptsTerms}
+            onChange={updateCheckbox("acceptsTerms")}
+            required
+          />
+          Li e aceito os termos de uso e a política de privacidade
         </label>
         {error && <p className="hint hint--error">{error}</p>}
         <button type="submit" disabled={loading}>

@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { login as apiLogin, logout as apiLogout, register as apiRegister } from "./api";
+import {
+  deleteAccount as apiDeleteAccount,
+  login as apiLogin,
+  logout as apiLogout,
+  register as apiRegister,
+} from "./api";
 
 const STORAGE_KEY = "loja_auth";
 const AuthContext = createContext(null);
@@ -35,8 +40,13 @@ export function AuthProvider({ children }) {
     setAuth(null);
   }
 
+  async function deleteAccount() {
+    await apiDeleteAccount(auth.token);
+    setAuth(null);
+  }
+
   return (
-    <AuthContext.Provider value={{ auth, login, register, logout }}>
+    <AuthContext.Provider value={{ auth, login, register, logout, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

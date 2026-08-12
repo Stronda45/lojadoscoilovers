@@ -24,7 +24,7 @@ from core.search_views import (
     vehicle_makes,
     vehicle_models,
 )
-from core.views import health, login, logout, orders, register
+from core.views import delete_account, health, login, logout, orders, register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('auth/register', register),
     path('auth/login', login),
     path('auth/logout', logout),
+    path('auth/me', delete_account),
     path('orders', orders),
     path('vehicles/makes', vehicle_makes),
     path('vehicles/makes/<str:make_id>/models', vehicle_models),
