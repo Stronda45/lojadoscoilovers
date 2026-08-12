@@ -1,7 +1,13 @@
-# Notas pré-planejamento — Fase 2
+# Notas pré-planejamento — Fase 2 (histórico)
 
-Decisões e pendências levantadas antes da Fase 2 começar oficialmente (sem
-tasks/ ainda — isso vira tasks quando a Fase 2 for iniciada). Serve pra não
+**Superado por `tasks/fase2/` e `docs/EXCEL-IMPORT.md`/`docs/RGPD.md`** (2026-08-12)
+— este arquivo fica como registro do raciocínio inicial, antes de termos os
+arquivos reais do cliente. A abordagem de "importador com mapeamento de colunas"
+descrita abaixo foi **revista**: com os arquivos reais em mãos, os formatos já são
+conhecidos (não precisam ser descobertos via mapeamento genérico) — ver
+`docs/EXCEL-IMPORT.md` pro desenho atual.
+
+Decisões e pendências levantadas antes da Fase 2 começar oficialmente. Serve pra não
 perder o contexto entre agora e lá.
 
 ## Import de Excel/CSV de outros fornecedores
