@@ -26,3 +26,14 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ["id", "customer", "status", "created_at"]
     list_filter = ["status"]
     inlines = [OrderItemInline]
+    actions = ["mark_ordered_with_supplier", "mark_delivered"]
+
+    @admin.action(description="Marcar como 'comprado no fornecedor'")
+    def mark_ordered_with_supplier(self, request, queryset):
+        updated = queryset.update(status=Order.STATUS_ORDERED_WITH_SUPPLIER)
+        self.message_user(request, f"{updated} pedido(s) marcado(s) como comprado no fornecedor.")
+
+    @admin.action(description="Marcar como 'entregue'")
+    def mark_delivered(self, request, queryset):
+        updated = queryset.update(status=Order.STATUS_DELIVERED)
+        self.message_user(request, f"{updated} pedido(s) marcado(s) como entregue.")
