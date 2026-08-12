@@ -30,6 +30,9 @@ Um schema genérico o suficiente pra cobrir os 4 formatos sem tabela por fornece
 ```python
 class Supplier(models.Model):
     name = models.CharField(...)  # "MTS", "TA Technix", "Cheney", "ES2WHEELS"
+    selected_fields = models.JSONField(default=list, blank=True)
+    # lista dos nomes de campo (de raw_attributes) que o cliente escolheu
+    # importar/exibir pra esse fornecedor — ver seção "Cliente escolhe as colunas"
 
 class ImportedProduct(models.Model):
     supplier = models.ForeignKey(Supplier, ...)
@@ -65,27 +68,77 @@ Technix repetem a mesma peça em várias linhas (uma por veículo compatível); 
 **Preço de venda**: mesma função `apply_margin()` já existente (`core/models.py`) —
 reusa a regra de margem/faixa de preço, não inventa uma nova.
 
-## Mecanismo de import — recomendação: comando, não upload no browser
+## Mecanismo de import — upload self-service pelo cliente (decisão 2026-08-12)
 
-A ideia original (`docs/FASE2-NOTAS.md`) era um wizard no browser com mapeamento de
-colunas — fazia sentido quando os formatos eram hipotéticos/desconhecidos. Agora que
-temos os 4 arquivos reais e conhecemos os formatos exatos, **um upload+mapeamento
-genérico no browser é trabalho maior do que o problema exige**, e nem é prático:
-o arquivo master da MTS tem 206MB — upload direto pelo navegador arrisca timeout,
-e processar 206 mil linhas dentro de uma request HTTP não é viável (sem fila de
-job/worker, que não existe no projeto hoje e adicionar é infraestrutura nova).
+**Decisão revista**: o cliente vai poder subir os arquivos ele mesmo, sempre que
+precisar (não depende de comando rodado por nós). Parser continua **dedicado por
+fornecedor** (4 funções conhecidas, não um mapeamento genérico de colunas — os
+formatos já são conhecidos, isso não muda). O que muda é só a entrada: um endpoint
+de upload no admin em vez de management command.
 
-**Recomendação**: parser dedicado por fornecedor (4 funções conhecidas, não um
-mapeamento genérico) rodado via **management command** do Django
-(`python manage.py import_supplier <nome> <caminho-do-arquivo>`), executado por
-quem tiver acesso ao servidor (você ou, futuramente, o cliente via instrução simples)
-sempre que uma planilha nova chegar. Processa em streaming (não carrega o arquivo
-inteiro em memória) e usa `bulk_create`/`bulk_update` em lote.
+### O limite real: o arquivo master da MTS (206MB)
 
-Isso é mais barato de construir e testar (bate com "testes automatizados mínimos" do
-orçamento da Fase 2) do que uma UI de upload self-service completa. Se o cliente
-quiser mesmo assim fazer upload sozinho pelo navegador no futuro, isso vira um item
-avulso — não é a mesma conta de "importar 4 planilhas conhecidas".
+Processar 206 mil linhas dentro de uma requisição HTTP não é viável sem fila de
+job/worker (infraestrutura que o projeto não tem hoje — adicionar é custo/
+complexidade novos, mais hospedagem). Os outros arquivos (TA Technix ~10,5k linhas,
+rodas, e os recortes por categoria da MTS — 1,2k a 85k linhas) processam numa
+requisição normal, de forma eficiente (streaming, sem carregar tudo em memória).
+
+**Caminho padrão**: cliente sobe os arquivos por categoria da MTS, não o master —
+funciona com a infraestrutura atual, sem custo extra.
+
+**Se o cliente quiser mesmo assim o master de 206MB de uma vez**: é tecnicamente
+possível, mas exige fila de job (Celery/Redis ou alternativa mais leve como
+`django-rq`/`huey`) — infraestrutura nova, mais hospedagem, mais escopo. **Vira
+item cobrado à parte**, não incluso na Fase 2 — precisa ser explícito com o cliente
+antes, não assumido.
+
+### Documentação pro cliente (não-técnico)
+
+Precisa de um guia curto (passo a passo, sem jargão) cobrindo:
+1. Onde fazer o upload (tela do admin).
+2. **Por que usar os arquivos por categoria da MTS, não o master** — explicar em
+   termos simples (arquivo muito grande, sistema não processa de uma vez sem custo
+   extra de servidor) pra ele entender a razão, não só a regra.
+3. O que esperar depois de subir (produto atualizado x novo, tempo de
+   processamento).
+4. O que fazer se der erro (mensagem de erro amigável, não stack trace).
+
+Fica como entregável desta task, não é opcional — sem isso, o cliente não-técnico
+não usa a feature sozinho, que era o objetivo.
+
+## Segurança do upload (obrigatório, não opcional)
+
+Upload self-service de arquivo é superfície de ataque — checklist a implementar:
+
+- **Validar extensão E conteúdo real** do arquivo (não confiar só no nome — dá pra
+  renomear qualquer arquivo pra `.csv`). Verificar assinatura/estrutura real antes
+  de processar.
+- **Limite de tamanho** no upload — rejeita antes de processar, evita esgotar
+  memória/disco de propósito.
+- **Zip bomb**: TA Technix já vem num zip — limitar tamanho descomprimido, não só o
+  tamanho do arquivo enviado (um zip pequeno pode descomprimir pra gigabytes).
+- **Path traversal** ao descompactar — usar `zipfile`/`openpyxl` do Python
+  diretamente, nunca chamar `unzip`/`unrar` via shell com nome de arquivo vindo do
+  usuário interpolado na string do comando (evita injeção de comando de vez, não só
+  mitiga).
+- **CSV injection**: célula começando com `=`, `+`, `-`, `@` pode virar fórmula se
+  alguém reabrir o dado num Excel depois (ex: exportar um relatório) — escapar esses
+  valores ao guardar.
+- **Só aceitar `.xlsx`/`.csv`**, nunca `.xlsm` (macro) — `openpyxl` não executa
+  macro, mas não precisamos nem correr esse risco.
+- SQL injection não é vetor aqui — tudo passa pelo Django ORM (parametrizado), sem
+  SQL bruto montado com dado do arquivo.
+
+## Cliente escolhe quais colunas importam (decisão 2026-08-12)
+
+Cada fornecedor tem dezenas de colunas (`raw_attributes`) — nem todas interessam pro
+cliente mostrar na loja. Em vez de um mapeamento genérico ("qual coluna é qual
+campo", já resolvido pelos parsers dedicados), a escolha aqui é mais simples:
+**quais dos campos já extraídos aparecem** — uma lista editável por fornecedor
+(`Supplier.selected_fields`, ver schema acima), configurável no admin. Reduz
+retrabalho (cliente ajusta sem pedir mudança de código) sem precisar construir uma
+tela de mapeamento completa.
 
 ## Busca dos produtos importados
 
@@ -99,7 +152,8 @@ veículo compartilhada). Duas variantes possíveis dependendo da resposta à per
   categoria direto em `ImportedProduct`, ignora `ImportedProductFitment`.
 
 ## Pendências (ver `perguntas-para-cliente.txt`, seção 7)
-- Importar só o master da MTS, só os recortes por categoria, ou os dois?
+- Importar só o master da MTS, só os recortes por categoria, ou os dois? (Se
+  master: confirmar que ele topa o custo extra de infraestrutura — item à parte.)
 - Margem aplica sobre `Netto EK` (custo) da TA Technix, ou usa o `UVP` dele direto?
 - Como precificar as rodas (sem preço no arquivo)?
 - Busca com cascata de veículo ou simples (texto/categoria)?
