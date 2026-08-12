@@ -39,12 +39,14 @@ fechar cada fase, pra não esquecer.
       aparecendo normalmente na listagem. Causou um 500 (corrigido — task 08,
       agora trata como indisponível). Não investigado o motivo raiz (produto
       descontinuado no fornecedor? id de listagem ≠ id de preço pra rodas?).
-- [ ] **Margem por faixa de preço**: cliente recusou o 1.30× fixo, quer taxa
-      variável por faixa (ex: <100 EUR vs 100-500 EUR), mas ainda não mandou os
-      valores/percentuais de cada faixa. Estrutura já pronta (`MarginTier`,
-      task 04) — só falta ele confirmar os números e cadastrar via `/admin`.
-
 ## Resolvidas (mantido como histórico rápido)
+
+- ~~Margem por faixa de preço~~ (2026-08-12) — cliente respondeu com uma tabela de
+  interpolação linear (`regra_de_preços.md`, na raiz do famaInPecas), não faixas
+  fixas. `MarginRule`/`MarginTier` foram **removidos** e substituídos por
+  `PriceTablePoint` + `apply_margin()` reescrito (`core/models.py`). Valores exatos
+  da tabela do cliente conferidos um a um contra o JS de referência dele — todos
+  batem. Ver `docs/PRICING.md`.
 
 - ~~Como pegar `product_id` numérico na listagem de produtos~~ — `ko.dataFor()` via
   Playwright (task 03).

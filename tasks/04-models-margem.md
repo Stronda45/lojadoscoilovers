@@ -50,3 +50,16 @@ os valores.
 - [x] Migration `0002_margintier.py` criada e aplicada.
 - Cadastro de faixas fica vazio até o cliente confirmar os percentuais — ver
   `investigar.md`.
+
+## Addendum (2026-08-12) — substituição completa por tabela de preços
+Cliente respondeu com uma tabela concreta de interpolação linear (custo→venda),
+não faixas percentuais. `MarginRule` e `MarginTier` **removidos** (não mantidos
+como fallback morto) e substituídos por `PriceTablePoint`. Detalhe completo em
+`docs/PRICING.md`. `apply_margin()` continua com a mesma assinatura — nada em
+`search_views.py`/`views.py` precisou mudar.
+
+- [x] Migration `0004` (remove `MarginRule`/`MarginTier`, cria `PriceTablePoint`)
+      e `0005` (data migration, popula os 17 pontos exatos do cliente).
+- [x] Todos os pontos conferidos individualmente contra os exemplos do arquivo do
+      cliente — batem exato, incluindo arredondamento (`ROUND_HALF_UP`, pra bater
+      com `Math.round()` do JS original).

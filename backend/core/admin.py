@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Customer, MarginRule, MarginTier, Order, OrderItem
+from .models import Customer, Order, OrderItem, PriceTablePoint
 
 
 @admin.register(Customer)
@@ -9,22 +9,10 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ["user__username", "user__email", "phone"]
 
 
-@admin.register(MarginRule)
-class MarginRuleAdmin(admin.ModelAdmin):
-    list_display = ["mode", "value", "updated_at"]
-
-    def has_add_permission(self, request):
-        # Singleton — nao deixa criar um segundo registro.
-        return not MarginRule.objects.exists()
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-
-@admin.register(MarginTier)
-class MarginTierAdmin(admin.ModelAdmin):
-    list_display = ["min_price", "max_price", "mode", "value"]
-    ordering = ["min_price"]
+@admin.register(PriceTablePoint)
+class PriceTablePointAdmin(admin.ModelAdmin):
+    list_display = ["cost", "sale_price"]
+    ordering = ["cost"]
 
 
 class OrderItemInline(admin.TabularInline):
