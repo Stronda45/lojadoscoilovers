@@ -96,3 +96,19 @@ export function listOrders(token) {
 export function deleteAccount(token) {
   return request("DELETE", "/auth/me", { token });
 }
+
+export function catalogMakes() {
+  return apiGet("/catalog/makes");
+}
+
+export function catalogModels(make) {
+  return apiGet(`/catalog/makes/${make}/models`);
+}
+
+export function catalogVariants({ make, model }) {
+  return apiGet("/catalog/variants", { make, model });
+}
+
+export function catalogSearch({ q, category, make, model, variant }) {
+  return apiGet("/catalog/search", { q, category, make, model, variant });
+}

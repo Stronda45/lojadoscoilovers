@@ -41,7 +41,15 @@ veículo completa (uma linha por peça×motorização, igual ao dtsshop.de); as 
       `GET /catalog/makes/<make>/models`, `GET /catalog/variants`,
       `GET /catalog/search` (todos os filtros combináveis). Testado contra
       dados reais importados (MTS) + 7 testes automatizados.
-- [ ] Tela no frontend pra esse catálogo — não iniciada.
+- [x] Tela no frontend pra esse catálogo (`/catalogo`, `CatalogPage.jsx`) —
+      busca por texto e por veículo, paginação. Sem botão "Pedir": o fluxo de
+      pedido hoje só funciona com produtos do dtsshop.de (`orders` view chama
+      `get_price_and_availability` ao vivo, específico do fornecedor
+      escondido) — produto importado mostra "preço sob consulta" com aviso
+      pra contactar. Estender pedido pra cobrir catálogo importado fica como
+      item futuro, não estava no escopo desta task. Testado ao vivo com dados
+      reais da MTS (Playwright): busca, cascata marca→modelo→motorização e
+      paginação funcionando, sem erros de console.
 - [ ] Documentação não-técnica pro cliente (passo a passo de upload) — não
       iniciada, entregável obrigatório antes de considerar concluído.
 

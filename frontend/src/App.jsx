@@ -1,6 +1,7 @@
 import { BrowserRouter, Link, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth";
 import AccountPage from "./pages/AccountPage";
+import CatalogPage from "./pages/CatalogPage";
 import LoginPage from "./pages/LoginPage";
 import OrdersPage from "./pages/OrdersPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -47,12 +48,16 @@ export default function App() {
               <span className="brand">Loja dos Coilovers</span>
               <span className="tagline">peças e suspensões pro seu carro</span>
             </Link>
+            <Link to="/catalogo" className="nav__catalog-link">
+              Outros fornecedores
+            </Link>
             <Nav />
           </header>
 
           <main>
             <Routes>
               <Route path="/" element={<SearchPage />} />
+              <Route path="/catalogo" element={<CatalogPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
               <Route path="/pedidos" element={<OrdersPage />} />
