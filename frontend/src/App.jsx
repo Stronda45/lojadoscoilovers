@@ -64,6 +64,20 @@ export default function App() {
               <Route path="/conta" element={<AccountPage />} />
             </Routes>
           </main>
+
+          <footer className="site-footer">
+            <span>
+              Site criado por{" "}
+              <a
+                href="https://wa.me/351911509368?text=Ol%C3%A1%20Pablo%2C%20vi%20seu%20contacto%20no%20rodap%C3%A9%20de%20um%20site%20e%20gostaria%20de%20falar%20sobre%20um%20projeto%20freelancer."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Pablo ©
+              </a>{" "}
+              — disponível para trabalhos freelancer
+            </span>
+          </footer>
         </div>
       </BrowserRouter>
     </AuthProvider>

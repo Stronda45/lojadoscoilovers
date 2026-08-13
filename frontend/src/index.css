@@ -105,6 +105,34 @@ body {
   font-size: 13px;
 }
 
+.nav__catalog-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.nav__catalog-link:hover {
+  text-decoration: underline;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 16px 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+.site-footer a {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.site-footer a:hover {
+  color: var(--primary);
+}
+
 main {
   max-width: 1000px;
   width: 100%;
