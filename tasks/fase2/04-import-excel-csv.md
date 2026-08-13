@@ -34,8 +34,11 @@ veículo completa (uma linha por peça×motorização, igual ao dtsshop.de); as 
       assinatura real do conteúdo, limite de tamanho, zip bomb (tamanho
       descomprimido), zero escrita em disco ao ler dentro de zip (elimina
       path traversal por construção, não por sanitização), CSV injection.
-- [ ] UI pra escolher quais campos (`raw_attributes`) ficam visíveis
-      (`Supplier.selected_fields` já existe no model, falta a tela).
+- [x] UI pra escolher quais campos (`raw_attributes`) ficam visíveis —
+      `SupplierAdminForm` (`core/admin.py`), checkboxes por fornecedor
+      (`SUPPLIER_FIELD_CHOICES` em `core/importers/service.py`, chaves fixas
+      por parser). Testado ao vivo (curl com sessão de admin): MTS mostra só
+      suas 6 chaves, não mistura com as da TA Technix. 2 testes novos.
 - [x] Busca dupla (texto/categoria **e** veículo) — cliente confirmou que
       quer os dois (pergunta 7.4). `GET /catalog/makes`,
       `GET /catalog/makes/<make>/models`, `GET /catalog/variants`,

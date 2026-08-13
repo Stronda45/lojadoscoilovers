@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import path
 
 from .importers.security import UploadValidationError
-from .importers.service import SUPPLIER_SLUGS, import_supplier_file
+from .importers.service import SUPPLIER_FIELD_CHOICES, SUPPLIER_SLUGS, import_supplier_file
 from .models import (
     Customer,
     ImportedProduct,
@@ -53,8 +53,32 @@ class OrderAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} pedido(s) marcado(s) como entregue.")
 
 
+class SupplierAdminForm(forms.ModelForm):
+    selected_fields = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Campos exibidos na loja",
+        help_text="Quais campos extras (raw_attributes) desse fornecedor aparecem pro cliente final.",
+    )
+
+    class Meta:
+        model = Supplier
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        slug = self.instance.slug if self.instance and self.instance.pk else None
+        choices = SUPPLIER_FIELD_CHOICES.get(slug, [])
+        self.fields["selected_fields"].choices = [(field, field) for field in choices]
+        if not choices:
+            self.fields["selected_fields"].help_text += (
+                " (salve o fornecedor com o slug certo primeiro pra ver as opções)"
+            )
+
+
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
+    form = SupplierAdminForm
     list_display = ["name", "slug"]
     prepopulated_fields = {"slug": ["name"]}
 

@@ -262,6 +262,42 @@ class SupplierModelTests(TestCase):
             Supplier.objects.create(name="MTS 2", slug="mts")
 
 
+class SupplierAdminSelectedFieldsTests(TestCase):
+    """UI de Supplier.selected_fields — checkboxes das chaves de
+    raw_attributes daquele fornecedor, editável só pelo admin."""
+
+    def setUp(self):
+        User.objects.filter(username="dono").delete()
+        self.dono = User.objects.create_superuser(
+            username="dono", password="x", email="dono@example.com"
+        )
+        self.supplier = Supplier.objects.create(name="MTS", slug="mts")
+
+    def test_form_mostra_checkboxes_das_chaves_do_fornecedor(self):
+        client = Client()
+        client.login(username="dono", password="x")
+        resp = client.get(f"/admin/core/supplier/{self.supplier.pk}/change/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "body_type")
+        self.assertNotContains(resp, "ean_code")  # chave de outro fornecedor (TA Technix)
+
+    def test_salvar_persiste_selected_fields(self):
+        client = Client()
+        client.login(username="dono", password="x")
+        resp = client.post(
+            f"/admin/core/supplier/{self.supplier.pk}/change/",
+            {
+                "name": "MTS",
+                "slug": "mts",
+                "selected_fields": ["body_type", "weight"],
+            },
+            follow=True,
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.supplier.refresh_from_db()
+        self.assertEqual(self.supplier.selected_fields, ["body_type", "weight"])
+
+
 class ImportedProductSalePriceTests(TestCase):
     def setUp(self):
         from core.models import PriceTablePoint

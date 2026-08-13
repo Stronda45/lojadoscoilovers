@@ -16,6 +16,16 @@ SUPPLIER_SLUGS = {
     "es2wheels": ("ES2WHEELS", parse_wheels_xlsx, ".xlsx"),
 }
 
+# Chaves de raw_attributes que cada parser produz — fixas no código (não
+# dependem do arquivo enviado). Usado pra montar as opções de
+# Supplier.selected_fields no admin (quais campos o cliente quer exibir).
+SUPPLIER_FIELD_CHOICES = {
+    "mts": ["housing", "type", "body_type", "drive_type", "fuel_type", "weight"],
+    "ta-technix": ["ean_code", "uvp_sugerido", "liefermenge"],
+    "cheney": ["brand", "model", "size", "pcd", "et", "cb", "finish", "stock"],
+    "es2wheels": ["brand", "model", "size", "pcd", "et", "cb", "finish", "stock"],
+}
+
 
 class ImportResult:
     def __init__(self):
