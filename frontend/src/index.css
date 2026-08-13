@@ -1,11 +1,16 @@
 :root {
+  /* Paleta da marca (Loja dos Coilovers, confirmada pelo cliente 2026-08-12):
+     site majoritariamente branco/cinza, com preto e vermelho como detalhes
+     — não a mesma proporção de preto do fundo do logo. */
   --bg: #f6f7f9;
   --surface: #ffffff;
   --border: #e2e4e9;
   --text: #1b1d23;
   --text-muted: #6b7280;
-  --primary: #1f3a93;
-  --primary-dark: #16295e;
+  --ink: #141416;
+  --ink-dark: #000000;
+  --primary: #d21f1f;
+  --primary-dark: #9c1616;
   --radius: 10px;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
 }
@@ -28,23 +33,30 @@ body {
 }
 
 .topbar {
-  background: var(--primary);
-  background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(120deg, var(--ink), var(--ink-dark));
   color: #fff;
-  padding: 20px 24px;
+  padding: 14px 24px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  border-bottom: 3px solid var(--primary);
 }
 
 .brand-link {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   text-decoration: none;
   color: inherit;
+}
+
+.brand-logo {
+  height: 44px;
+  width: 44px;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 .topbar .brand {
@@ -103,7 +115,7 @@ main {
 
 .hero {
   background:
-    linear-gradient(90deg, rgba(15, 27, 74, 0.75) 0%, rgba(15, 27, 74, 0.35) 55%, rgba(15, 27, 74, 0.05) 100%),
+    linear-gradient(90deg, rgba(10, 10, 11, 0.8) 0%, rgba(10, 10, 11, 0.4) 55%, rgba(10, 10, 11, 0.05) 100%),
     url("/hero-car.jpg") center 42% / cover no-repeat;
   border-radius: var(--radius);
   color: #fff;
@@ -113,6 +125,7 @@ main {
   padding: 32px;
   margin-bottom: 24px;
   overflow: hidden;
+  border-bottom: 3px solid var(--primary);
 }
 
 .hero__text {

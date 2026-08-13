@@ -1,6 +1,5 @@
 import { BrowserRouter, Link, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth";
-import Logo from "./components/Logo";
 import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/LoginPage";
 import OrdersPage from "./pages/OrdersPage";
@@ -44,8 +43,8 @@ export default function App() {
         <div className="app-shell">
           <header className="topbar">
             <Link to="/" className="brand-link">
-              <Logo size={26} />
-              <span className="brand">lojadoscoilovers</span>
+              <img src="/logo.jpg" alt="Loja dos Coilovers" className="brand-logo" />
+              <span className="brand">Loja dos Coilovers</span>
               <span className="tagline">peças e suspensões pro seu carro</span>
             </Link>
             <Nav />
