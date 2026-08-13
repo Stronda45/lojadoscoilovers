@@ -335,3 +335,76 @@ class AdminUploadViewTests(TestCase):
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(ImportedProduct.objects.count(), 1)
+
+
+@override_settings(ALLOWED_HOSTS=["testserver"])
+class CatalogVehicleSearchTests(TestCase):
+    """Busca dupla (texto + veículo) — cliente confirmou que quer os 2
+    (perguntas-para-cliente.txt, 7.4). Cascata sourced do
+    ImportedProductFitment (dado já no banco, sem chamada externa)."""
+
+    def setUp(self):
+        supplier = Supplier.objects.create(name="MTS", slug="mts")
+        self.bmw_product = ImportedProduct.objects.create(
+            supplier=supplier, external_reference="B1", title="Mola BMW",
+            cost_price=Decimal("100.00"), category="Coilover kits",
+        )
+        ImportedProductFitment.objects.create(
+            product=self.bmw_product, make="BMW", model="3 Series", variant="320d",
+        )
+        self.audi_product = ImportedProduct.objects.create(
+            supplier=supplier, external_reference="A1", title="Mola Audi",
+            cost_price=Decimal("50.00"), category="Coilover kits",
+        )
+        ImportedProductFitment.objects.create(
+            product=self.audi_product, make="Audi", model="A3", variant="2.0 TDI",
+        )
+        self.wheel = ImportedProduct.objects.create(
+            supplier=Supplier.objects.create(name="ES2WHEELS", slug="es2wheels"),
+            external_reference="W1", title="Roda sem fitment", cost_price=None,
+        )
+
+    def test_catalog_makes_lista_marcas_com_fitment(self):
+        client = Client()
+        resp = client.get("/catalog/makes")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(set(resp.json()), {"BMW", "Audi"})
+
+    def test_catalog_models_filtra_por_marca(self):
+        client = Client()
+        resp = client.get("/catalog/makes/BMW/models")
+        self.assertEqual(resp.json(), ["3 Series"])
+
+    def test_catalog_variants_exige_make_e_model(self):
+        client = Client()
+        resp = client.get("/catalog/variants")
+        self.assertEqual(resp.status_code, 400)
+
+        resp = client.get("/catalog/variants", {"make": "BMW", "model": "3 Series"})
+        self.assertEqual(resp.json(), ["320d"])
+
+    def test_busca_por_veiculo_filtra_produto_certo(self):
+        client = Client()
+        resp = client.get("/catalog/search", {"make": "BMW"})
+        titles = [p["title"] for p in resp.json()]
+        self.assertEqual(titles, ["Mola BMW"])
+
+    def test_busca_por_veiculo_nao_duplica_produto_com_varios_fitments(self):
+        ImportedProductFitment.objects.create(
+            product=self.bmw_product, make="BMW", model="4 Series", variant="",
+        )
+        client = Client()
+        resp = client.get("/catalog/search", {"make": "BMW"})
+        self.assertEqual(len(resp.json()), 1)
+
+    def test_produto_sem_fitment_nao_aparece_na_busca_por_veiculo(self):
+        client = Client()
+        resp = client.get("/catalog/search", {"make": "BMW"})
+        titles = [p["title"] for p in resp.json()]
+        self.assertNotIn("Roda sem fitment", titles)
+
+    def test_produto_sem_fitment_aparece_na_busca_por_texto(self):
+        client = Client()
+        resp = client.get("/catalog/search", {"q": "Roda"})
+        titles = [p["title"] for p in resp.json()]
+        self.assertIn("Roda sem fitment", titles)

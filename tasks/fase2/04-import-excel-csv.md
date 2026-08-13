@@ -36,10 +36,11 @@ veículo completa (uma linha por peça×motorização, igual ao dtsshop.de); as 
       path traversal por construção, não por sanitização), CSV injection.
 - [ ] UI pra escolher quais campos (`raw_attributes`) ficam visíveis
       (`Supplier.selected_fields` já existe no model, falta a tela).
-- [ ] Endpoint de busca (`GET /catalog/search`) — **implementado, mas
-      simples** (texto/categoria, sem cascata de veículo). Cascata própria
-      pra MTS/TA Technix (que têm fitment) fica pendente da resposta à
-      pergunta 7.4.
+- [x] Busca dupla (texto/categoria **e** veículo) — cliente confirmou que
+      quer os dois (pergunta 7.4). `GET /catalog/makes`,
+      `GET /catalog/makes/<make>/models`, `GET /catalog/variants`,
+      `GET /catalog/search` (todos os filtros combináveis). Testado contra
+      dados reais importados (MTS) + 7 testes automatizados.
 - [ ] Tela no frontend pra esse catálogo — não iniciada.
 - [ ] Documentação não-técnica pro cliente (passo a passo de upload) — não
       iniciada, entregável obrigatório antes de considerar concluído.

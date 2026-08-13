@@ -147,16 +147,23 @@ campo", já resolvido pelos parsers dedicados), a escolha aqui é mais simples:
 retrabalho (cliente ajusta sem pedir mudança de código) sem precisar construir uma
 tela de mapeamento completa.
 
-## Busca dos produtos importados
+## Busca dos produtos importados — implementada (2026-08-12)
 
-Catálogo separado da busca do dtsshop.de (decisão já tomada — sem cascata de
-veículo compartilhada). Duas variantes possíveis dependendo da resposta à pergunta
-7.4:
-- **Com fitment** (usa `ImportedProductFitment`): cascata marca→modelo própria,
-  igual em espírito à do dtsshop.de mas mais simples (dado já vem estruturado, sem
-  Playwright/scraping — é só uma query no banco).
-- **Sem fitment** (fallback se o cliente preferir simples): busca por texto/
-  categoria direto em `ImportedProduct`, ignora `ImportedProductFitment`.
+Catálogo separado da busca do dtsshop.de (sem cascata de veículo compartilhada).
+Cliente respondeu a pergunta 7.4: quer os **dois tipos de busca**, texto e
+veículo, combináveis.
+
+- `GET /catalog/makes` — marcas com fitment cadastrado (MTS/TA Technix; rodas
+  não aparecem aqui, não têm fitment).
+- `GET /catalog/makes/<make>/models` — modelos daquela marca.
+- `GET /catalog/variants?make=&model=` — motorizações daquele modelo.
+- `GET /catalog/search?make=&model=&variant=&q=&category=` — todos os
+  parâmetros são opcionais e combináveis; produto sem fitment (rodas) só
+  aparece via `q`/`category`, nunca via `make`/`model`/`variant`.
+
+Cascata é só query no banco (`ImportedProductFitment`), sem Playwright/scraping —
+mais simples que a do dtsshop.de porque o dado já vem estruturado do arquivo.
+7 testes automatizados cobrindo isso em `core/tests_importers.py`.
 
 ## Achados testando contra os arquivos reais (não amostras)
 
