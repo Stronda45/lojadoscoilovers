@@ -93,9 +93,11 @@ veículo completa (uma linha por peça×motorização, igual ao dtsshop.de); as 
       da Fase 2 em 63 testes, todos passando.
 
 ## Antes de finalizar (itens que ainda dependem do cliente)
-1. Resolver as 6 perguntas da seção 7 em `perguntas-para-cliente.txt`.
-2. Confirmar com o cliente se isso está coberto pelos €1.200 da Fase 2 ou é
-   orçado à parte — não estava no PDF assinado.
+1. Resolver as perguntas pendentes da seção 7 em `perguntas-para-cliente.txt`
+   (preço das rodas, master vs. recortes da MTS, fotos das rodas).
+2. ~~Confirmar se isso está coberto pelos €1.200 da Fase 2 ou é orçado à
+   parte~~ — **confirmado pelo cliente: entra nos €1.200**, não é cobrado à
+   parte.
 
 ## Arquivos
 `backend/core/models.py` (Supplier/ImportedProduct/ImportedProductFitment),

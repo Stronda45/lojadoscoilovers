@@ -1,13 +1,15 @@
 # Import de Excel/CSV de outros fornecedores — Fase 2
 
-**Status: parcialmente implementada** (2026-08-12) — models, parsers dos 4
-fornecedores, upload com segurança e upsert já funcionam, testados contra os
-arquivos reais. Não estava no escopo original da Fase 2 (`proposta-v2-
-intermediario.pdf`) — surgiu numa conversa à parte com o cliente. Falta pra
-fechar: (a) alinhar com o cliente se entra nos €1.200 ou é cobrado à parte,
-(b) respostas da seção 7 de `perguntas-para-cliente.txt`, (c) tela de busca
-no frontend. Ver `tasks/fase2/04-import-excel-csv.md` pro detalhe do que já
-foi feito vs. pendente.
+**Status: quase concluída** — models, parsers dos 4 fornecedores, upload com
+segurança, upsert, busca (texto + veículo) e UI de seleção de campos já
+funcionam, testados contra os arquivos reais. Não estava no escopo original
+da Fase 2 (`proposta-v2-intermediario.pdf`) — surgiu numa conversa à parte
+com o cliente, que confirmou (2026-08-13) que entra nos €1.200, sem cobrança
+à parte. Falta pra fechar: respostas pendentes da seção 7 de
+`perguntas-para-cliente.txt` (preço das rodas, master vs. recortes da MTS,
+fotos das rodas) e o guia não-técnico de upload pro cliente. Ver
+`tasks/fase2/04-import-excel-csv.md` pro detalhe do que já foi feito vs.
+pendente.
 
 ## Os 4 fornecedores são muito diferentes entre si
 
